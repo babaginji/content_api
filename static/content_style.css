@@ -1,20 +1,21 @@
 body {
     font-family: sans-serif;
-    margin: 0; /* 余白をなくす */
+    margin: 0;
     background-color: #f9f9f9;
-    padding: 10px; /* 端に少し余白 */
+    padding: 10px;
 }
 
 h1 {
     text-align: center;
     margin-bottom: 15px;
+    font-size: 28px; /* 大きめタイトル */
 }
 
 #content-list {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* カード同士の隙間 */
-    width: 100%; /* 画面いっぱい */
+    gap: 10px; /* 少し余白広め */
+    width: 100%;
 }
 
 .content-item-link {
@@ -31,30 +32,30 @@ h1 {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 12px;
+    padding: 15px; /* 少し広め */
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     transition: box-shadow 0.2s ease;
-    width: 100%; /* 親の幅いっぱいに広げる */
+    width: 100%;
 }
 
 .thumbnail img {
     width: 100%;
     height: auto;
     border-radius: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .content-info h2 {
-    font-size: 16px;
-    margin: 0 0 6px 0;
+    font-size: 20px; /* タイトル大きめ */
+    margin: 0 0 8px 0;
 }
 
 .description {
-    font-size: 13px;
+    font-size: 16px; /* 説明文大きめ */
     color: #555;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -62,16 +63,16 @@ h1 {
 }
 
 .meta {
-    font-size: 11px;
+    font-size: 14px; /* 日付や作者も大きく */
     color: #888;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .like-form button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
     align-self: flex-start;
@@ -82,7 +83,7 @@ h1 {
 }
 
 .x-widget-card {
-    padding: 8px;
+    padding: 10px;
 }
 
 .x-widget-card iframe {
