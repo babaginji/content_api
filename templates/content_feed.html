@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>診断タイプ別フィード</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='content_style.css') }}">
+</head>
+<body>
+    <h1>診断タイプ別フィード</h1>
+    <div id="content-list">
+        {% for content in contents %}
+        <div class="content-item-link">
+            <a href="{{ url_for('content_detail', content_id=content[0]) }}">
+                <div class="content-item">
+                    {% if content[5] %}
+                        <img src="{{ content[5] }}" alt="thumbnail" width="120">
+                    {% endif %}
+                    <h2>{{ content[2] }}</h2>
+                    <p>{{ content[4] }}</p>
+                    <small>タイプ: {{ content[1] }} | 作者: {{ content[8] }} | 投稿日: {{ content[7] }} | いいね: {{ content[9] }}</small>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- X公式ウィジェットカード -->
+        <div class="content-item-link">
+            <div class="content-item x-widget-card">
+                <h2>X公式タイムライン</h2>
+                <p class="description">好きなアカウントの最新投稿</p>
+                <div class="meta">タイプ: Xウィジェット | 作者: 任意</div>
+                <a class="twitter-timeline" data-height="400" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw">Tweets by TwitterDev</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // いいねボタンを押したときに親リンクの遷移を止める
+        document.querySelectorAll('.like-form button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.stopPropagation();  // 親リンクのクリックイベントを止める
+            });
+        });
+    </script>
+</body>
+</html>
