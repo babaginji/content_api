@@ -1,14 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
-from db import get_content_by_group, init_db, add_like, get_content_by_id
+from db import get_content_by_group, add_like, get_content_by_id  # init_dbは削除
 from apscheduler.schedulers.background import BackgroundScheduler
 from fetch_and_save_content import main as fetch_content
-from ai_comment import generate_comment  # AIコメント用関数
 import atexit
 
 app = Flask(__name__)
-
-# DB初期化（最初だけ）
-init_db()
 
 # ---------------------------
 # スケジューラー起動
@@ -16,11 +12,6 @@ init_db()
 scheduler = BackgroundScheduler()
 scheduler.add_job(fetch_content, "interval", minutes=10)  # 10分ごとに本番データ取得
 scheduler.start()
-
-# ---------------------------
-# Jinja から AI コメント関数を呼べるように
-# ---------------------------
-app.jinja_env.globals["generate_comment"] = generate_comment
 
 # ---------------------------
 # ルート定義

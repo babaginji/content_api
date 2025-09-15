@@ -10,7 +10,12 @@ def init_db():
     c = conn.cursor()
     c.execute(
         """
-        CREATE TABLE IF NOT EXISTS content (
+        DROP TABLE IF EXISTS content;
+        """
+    )
+    c.execute(
+        """
+        CREATE TABLE content (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             type TEXT,
             title TEXT,
@@ -21,13 +26,13 @@ def init_db():
             published_at TEXT,
             author TEXT,
             likes INTEGER DEFAULT 0,
-            ai_comment TEXT DEFAULT ''
+            ai_comment TEXT
         )
         """
     )
     conn.commit()
     conn.close()
-    print("DBを初期化しました！")
+    print("DBを初期化しました（ai_commentカラム付き）！")
 
 
 # ---------------------------

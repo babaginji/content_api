@@ -18,18 +18,15 @@
                     <h2>{{ content[2] }}</h2>
                     <p>{{ content[4] }}</p>
                     <small>タイプ: {{ content[1] }} | 作者: {{ content[8] }} | 投稿日: {{ content[7] }} | いいね: {{ content[9] }}</small>
-
-                    <!-- AI コメント表示枠 -->
                     <div class="ai-comment">
-                        {% set ai_text = generate_comment(content[2], content[4], content[1]) %}
-                        <p>{{ ai_text }}</p>
+                        <p>{{ content[10] }}</p>  <!-- ai_comment カラムを直接表示 -->
                     </div>
                 </div>
             </a>
         </div>
         {% endfor %}
-
-        <!-- X公式ウィジェットカード -->
+    
+        <!-- X公式ウィジェットはループの後で固定表示 -->
         <div class="content-item-link">
             <div class="content-item x-widget-card">
                 <h2>X公式タイムライン</h2>
@@ -40,7 +37,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         document.querySelectorAll('.like-form button').forEach(button => {
             button.addEventListener('click', function(event) {

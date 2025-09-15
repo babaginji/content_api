@@ -1,12 +1,16 @@
 from db import save_content
 from news_api import fetch_news
-from ai_comment import generate_comment
+
+# import requests は YouTube用に必要
 import requests
 from config import YOUTUBE_API_KEY
 import datetime
 from typing import List, Dict
 
 
+# ---------------------------------
+# YouTube取得
+# ---------------------------------
 def fetch_youtube(query="投資", max_results=5, group_type="診断タイプA") -> List[Dict]:
     url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q={query}&maxResults={max_results}&key={YOUTUBE_API_KEY}"
     data = []
@@ -28,7 +32,7 @@ def fetch_youtube(query="投資", max_results=5, group_type="診断タイプA") 
                         "publishedAt", datetime.datetime.now().isoformat()
                     ),
                     "author": snippet.get("channelTitle", "不明"),
-                    "ai_comment": generate_comment(title, desc, group_type),
+                    "ai_comment": "コメント生成はAPI上限で未生成",  # ←安全版
                 }
             )
     except Exception as e:
@@ -36,18 +40,24 @@ def fetch_youtube(query="投資", max_results=5, group_type="診断タイプA") 
     return data
 
 
+# ---------------------------------
+# News取得
+# ---------------------------------
 def fetch_news_sample(query="投資", page_size=5, group_type="診断タイプA") -> List[Dict]:
     data = []
     try:
         news_list = fetch_news(query=query, page_size=page_size, group_type=group_type)
         for n in news_list:
-            n["ai_comment"] = generate_comment(n["title"], n["description"], group_type)
+            n["ai_comment"] = "コメント生成はAPI上限で未生成"  # ←安全版
             data.append(n)
     except Exception as e:
         print(f"[News] データ取得失敗: {e}")
     return data
 
 
+# ---------------------------------
+# Blog取得
+# ---------------------------------
 def fetch_blog_sample(group_type="診断タイプA") -> List[Dict]:
     now = datetime.datetime.now().isoformat()
     data = [
@@ -60,7 +70,7 @@ def fetch_blog_sample(group_type="診断タイプA") -> List[Dict]:
             "group_type": group_type,
             "published_at": now,
             "author": "ブログ作者A",
-            "ai_comment": generate_comment("初心者向け投資ブログ", "分かりやすく投資の基本を解説", group_type),
+            "ai_comment": "コメント生成はAPI上限で未生成",
         },
         {
             "type": "Blog",
@@ -71,12 +81,15 @@ def fetch_blog_sample(group_type="診断タイプA") -> List[Dict]:
             "group_type": "診断タイプB",
             "published_at": now,
             "author": "ブログ作者B",
-            "ai_comment": generate_comment("中級者向け投資戦略", "リスク管理と分散投資を丁寧に説明", "診断タイプB"),
+            "ai_comment": "コメント生成はAPI上限で未生成",
         },
     ]
     return data
 
 
+# ---------------------------------
+# メイン
+# ---------------------------------
 def main(group_type="診断タイプA"):
     all_data = []
     all_data.extend(fetch_youtube(group_type=group_type))
