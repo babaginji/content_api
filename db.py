@@ -30,12 +30,21 @@ def init_db():
 
 
 # ---------------------------
-# コンテンツ保存
+# コンテンツ保存（重複チェック付き）
+# data は list of dict
 # ---------------------------
 def save_content(data):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     for item in data:
+        # URL or タイトルが重複していないか確認
+        c.execute(
+            "SELECT id FROM content WHERE url=? OR title=?",
+            (item["url"], item["title"]),
+        )
+        if c.fetchone():
+            continue  # 既にある場合はスキップ
+
         c.execute(
             """
             INSERT INTO content (type, title, url, description, thumbnail, group_type, published_at, author)
@@ -54,13 +63,13 @@ def save_content(data):
         )
     conn.commit()
     conn.close()
-    print("サンプルデータを登録しました！")
+    print(f"{len(data)} 件のコンテンツを保存しました（重複は除外）")
 
 
 # ---------------------------
 # グループ別コンテンツ取得
 # ---------------------------
-def get_content_by_group(group_type):
+def get_content_by_group(group_type: str):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute(
@@ -68,18 +77,19 @@ def get_content_by_group(group_type):
         SELECT id, type, title, url, description, thumbnail, group_type, published_at, author, likes
         FROM content
         WHERE group_type=?
+        ORDER BY published_at DESC
         """,
         (group_type,),
     )
     rows = c.fetchall()
     conn.close()
-    return rows
+    return rows  # list of tuple
 
 
 # ---------------------------
 # ID指定でコンテンツ取得
 # ---------------------------
-def get_content_by_id(content_id):
+def get_content_by_id(content_id: int):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute(
@@ -92,13 +102,13 @@ def get_content_by_id(content_id):
     )
     row = c.fetchone()
     conn.close()
-    return row
+    return row  # tuple or None
 
 
 # ---------------------------
 # いいね関連
 # ---------------------------
-def get_likes(content_id):
+def get_likes(content_id: int) -> int:
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("SELECT likes FROM content WHERE id=?", (content_id,))
@@ -107,7 +117,7 @@ def get_likes(content_id):
     return result[0] if result else 0
 
 
-def add_like(content_id):
+def add_like(content_id: int):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("UPDATE content SET likes = likes + 1 WHERE id=?", (content_id,))

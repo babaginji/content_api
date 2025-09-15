@@ -6,31 +6,38 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='content_style.css') }}">
 </head>
 <body>
-    <h1>{{ content[2] }}</h1> <!-- タイトル -->
-    <p>タイプ: {{ content[1] }}</p>
-    <p>作者: {{ content[8] }} | 投稿日: {{ content[7] }}</p>
-    
-    {% if content[5] %}
-        <img src="{{ content[5] }}" alt="thumbnail" style="max-width: 100%;">
-    {% endif %}
-    
-    <p>{{ content[4] }}</p> <!-- 説明 -->
+    <div class="content-detail">
+        <h1>{{ content[2] }}</h1>
+        <div class="meta">タイプ: {{ content[1] }} | 作者: {{ content[8] }} | 投稿日: {{ content[7] }}</div>
 
-    {% if content[1] == 'YouTube' %}
-        {% set video_id = content[3].split('v=')[-1].split('&')[0] %}
-        <iframe width="560" height="315" 
-                src="https://www.youtube.com/embed/{{ video_id }}" 
-                frameborder="0" allowfullscreen></iframe>
-        <p><a href="{{ content[3] }}" target="_blank">動画リンクを開く</a></p>
-    {% elif content[1] == 'News' %}
-        <p><a href="{{ content[3] }}" target="_blank">ニュース記事を開く</a></p>
-    {% endif %}
+        {% if content[5] %}
+            <div class="thumbnail">
+                <img src="{{ content[5] }}" alt="thumbnail">
+            </div>
+        {% endif %}
 
-    <p>いいね: {{ content[9] }}</p>
-    <form action="{{ url_for('like_content', content_id=content[0]) }}" method="post">
-        <button type="submit">いいね👍</button>
-    </form>
+        <p class="description">{{ content[4] }}</p>
 
-    <a href="{{ url_for('home') }}">← 戻る</a>
+        {% if content[1] == 'YouTube' %}
+            {% set video_id = content[3].split('v=')[-1].split('&')[0] %}
+            <div class="youtube-embed">
+                <iframe width="100%" height="400" 
+                        src="https://www.youtube.com/embed/{{ video_id }}" 
+                        frameborder="0" allowfullscreen></iframe>
+                <p><a href="{{ content[3] }}" target="_blank">動画リンクを開く</a></p>
+            </div>
+        {% elif content[1] == 'News' %}
+            <p><a href="{{ content[3] }}" target="_blank">ニュース記事を開く</a></p>
+        {% elif content[1] == 'Blog' %}
+            <p><a href="{{ content[3] }}" target="_blank">ブログ記事を開く</a></p>
+        {% endif %}
+
+        <p>いいね: {{ content[9] }}</p>
+        <form class="like-form" action="{{ url_for('like_content', content_id=content[0]) }}" method="post">
+            <button type="submit">いいね👍</button>
+        </form>
+
+        <a href="{{ url_for('home') }}">← 戻る</a>
+    </div>
 </body>
 </html>

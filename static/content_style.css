@@ -90,3 +90,12 @@ h1 {
     width: 100% !important;
     border-radius: 6px;
 }
+.ai-comment {
+    background-color: #f0f8ff;
+    border-left: 3px solid #007bff;
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 15px;
+    color: #333;
+    border-radius: 4px;
+}

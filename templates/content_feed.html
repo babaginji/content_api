@@ -13,11 +13,17 @@
             <a href="{{ url_for('content_detail', content_id=content[0]) }}">
                 <div class="content-item">
                     {% if content[5] %}
-                        <img src="{{ content[5] }}" alt="thumbnail" width="120">
+                        <img src="{{ content[5] }}" alt="thumbnail">
                     {% endif %}
                     <h2>{{ content[2] }}</h2>
                     <p>{{ content[4] }}</p>
                     <small>タイプ: {{ content[1] }} | 作者: {{ content[8] }} | 投稿日: {{ content[7] }} | いいね: {{ content[9] }}</small>
+
+                    <!-- AI コメント表示枠 -->
+                    <div class="ai-comment">
+                        {% set ai_text = generate_comment(content[2], content[4], content[1]) %}
+                        <p>{{ ai_text }}</p>
+                    </div>
                 </div>
             </a>
         </div>
@@ -36,10 +42,9 @@
     </div>
 
     <script>
-        // いいねボタンを押したときに親リンクの遷移を止める
         document.querySelectorAll('.like-form button').forEach(button => {
             button.addEventListener('click', function(event) {
-                event.stopPropagation();  // 親リンクのクリックイベントを止める
+                event.stopPropagation();
             });
         });
     </script>
