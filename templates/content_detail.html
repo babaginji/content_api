@@ -18,6 +18,12 @@
 
         <p class="description">{{ content[4] }}</p>
 
+        <!-- AI コメント表示枠 -->
+        <div class="ai-comment">
+            {% set ai_text = generate_comment(content[2], content[4], content[1]) %}
+            <p>{{ ai_text }}</p>
+        </div>
+
         {% if content[1] == 'YouTube' %}
             {% set video_id = content[3].split('v=')[-1].split('&')[0] %}
             <div class="youtube-embed">

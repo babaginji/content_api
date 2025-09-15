@@ -3,7 +3,6 @@ from db import get_content_by_group, init_db, add_like, get_content_by_id
 from apscheduler.schedulers.background import BackgroundScheduler
 from fetch_and_save_content import main as fetch_content
 from ai_comment import generate_comment  # AIコメント用関数
-
 import atexit
 
 app = Flask(__name__)
@@ -15,7 +14,7 @@ init_db()
 # スケジューラー起動
 # ---------------------------
 scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_content, "interval", minutes=10)  # 10分ごとに取得
+scheduler.add_job(fetch_content, "interval", minutes=10)  # 10分ごとに本番データ取得
 scheduler.start()
 
 # ---------------------------

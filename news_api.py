@@ -23,12 +23,12 @@ def fetch_news(
     for a in articles:
         data.append(
             {
-                "type": "news",
-                "title": a.get("title", "タイトルなし"),
-                "url": a.get("url", "#"),
-                "description": a.get("description", ""),
-                "thumbnail": a.get("urlToImage", ""),
-                "group_type": group_type,  # 引数で動的に設定可能
+                "type": "News",
+                "title": a.get("title") or "タイトルなし",
+                "url": a.get("url") or "#",
+                "description": a.get("description") or "",
+                "thumbnail": a.get("urlToImage") or "",
+                "group_type": group_type,
             }
         )
     return data

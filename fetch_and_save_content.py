@@ -1,37 +1,34 @@
 from db import save_content
 from news_api import fetch_news
+from ai_comment import generate_comment
 import requests
 from config import YOUTUBE_API_KEY
 import datetime
 from typing import List, Dict
 
-# ---------------------------
-# YouTube検索
-# ---------------------------
-def fetch_youtube(
-    query: str = "投資", max_results: int = 3, group_type: str = "診断タイプA"
-) -> List[Dict]:
-    url = (
-        f"https://www.googleapis.com/youtube/v3/search"
-        f"?part=snippet&type=video&q={query}&maxResults={max_results}&key={YOUTUBE_API_KEY}"
-    )
+
+def fetch_youtube(query="投資", max_results=5, group_type="診断タイプA") -> List[Dict]:
+    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q={query}&maxResults={max_results}&key={YOUTUBE_API_KEY}"
     data = []
     try:
         res = requests.get(url, timeout=10).json()
         for item in res.get("items", []):
             snippet = item["snippet"]
+            title = snippet.get("title", "タイトルなし")
+            desc = snippet.get("description", "")
             data.append(
                 {
                     "type": "YouTube",
-                    "title": snippet.get("title", "タイトルなし"),
+                    "title": title,
                     "url": f"https://www.youtube.com/watch?v={item['id']['videoId']}",
-                    "description": snippet.get("description", ""),
+                    "description": desc,
                     "thumbnail": snippet["thumbnails"]["medium"]["url"],
                     "group_type": group_type,
                     "published_at": snippet.get(
                         "publishedAt", datetime.datetime.now().isoformat()
                     ),
                     "author": snippet.get("channelTitle", "不明"),
+                    "ai_comment": generate_comment(title, desc, group_type),
                 }
             )
     except Exception as e:
@@ -39,23 +36,19 @@ def fetch_youtube(
     return data
 
 
-# ---------------------------
-# News取得
-# ---------------------------
-def fetch_news_sample(
-    query: str = "投資", page_size: int = 3, group_type: str = "診断タイプA"
-) -> List[Dict]:
+def fetch_news_sample(query="投資", page_size=5, group_type="診断タイプA") -> List[Dict]:
+    data = []
     try:
-        return fetch_news(query=query, page_size=page_size, group_type=group_type)
+        news_list = fetch_news(query=query, page_size=page_size, group_type=group_type)
+        for n in news_list:
+            n["ai_comment"] = generate_comment(n["title"], n["description"], group_type)
+            data.append(n)
     except Exception as e:
         print(f"[News] データ取得失敗: {e}")
-        return []
+    return data
 
 
-# ---------------------------
-# Blog取得（簡易版）
-# ---------------------------
-def fetch_blog_sample() -> List[Dict]:
+def fetch_blog_sample(group_type="診断タイプA") -> List[Dict]:
     now = datetime.datetime.now().isoformat()
     data = [
         {
@@ -64,9 +57,10 @@ def fetch_blog_sample() -> List[Dict]:
             "url": "https://example.com/blog1",
             "description": "分かりやすく投資の基本を解説",
             "thumbnail": "",
-            "group_type": "診断タイプA",
+            "group_type": group_type,
             "published_at": now,
             "author": "ブログ作者A",
+            "ai_comment": generate_comment("初心者向け投資ブログ", "分かりやすく投資の基本を解説", group_type),
         },
         {
             "type": "Blog",
@@ -77,27 +71,24 @@ def fetch_blog_sample() -> List[Dict]:
             "group_type": "診断タイプB",
             "published_at": now,
             "author": "ブログ作者B",
+            "ai_comment": generate_comment("中級者向け投資戦略", "リスク管理と分散投資を丁寧に説明", "診断タイプB"),
         },
     ]
     return data
 
 
-# ---------------------------
-# DBに保存
-# ---------------------------
-def main():
+def main(group_type="診断タイプA"):
     all_data = []
-    all_data.extend(fetch_youtube())
-    all_data.extend(fetch_news_sample())
-    all_data.extend(fetch_blog_sample())
+    all_data.extend(fetch_youtube(group_type=group_type))
+    all_data.extend(fetch_news_sample(group_type=group_type))
+    all_data.extend(fetch_blog_sample(group_type=group_type))
 
     if all_data:
         save_content(all_data)
-        print("コンテンツをDBに追加しました！")
+        print(f"{len(all_data)} 件のコンテンツをDBに追加しました！")
     else:
         print("追加するコンテンツがありませんでした。")
 
 
-# ---------------------------
 if __name__ == "__main__":
     main()

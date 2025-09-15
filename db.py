@@ -20,7 +20,8 @@ def init_db():
             group_type TEXT,
             published_at TEXT,
             author TEXT,
-            likes INTEGER DEFAULT 0
+            likes INTEGER DEFAULT 0,
+            ai_comment TEXT DEFAULT ''
         )
         """
     )
@@ -47,8 +48,8 @@ def save_content(data):
 
         c.execute(
             """
-            INSERT INTO content (type, title, url, description, thumbnail, group_type, published_at, author)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO content (type, title, url, description, thumbnail, group_type, published_at, author, ai_comment)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 item["type"],
@@ -59,6 +60,7 @@ def save_content(data):
                 item["group_type"],
                 item.get("published_at", datetime.now().isoformat()),
                 item.get("author", ""),
+                item.get("ai_comment", ""),
             ),
         )
     conn.commit()
@@ -74,7 +76,7 @@ def get_content_by_group(group_type: str):
     c = conn.cursor()
     c.execute(
         """
-        SELECT id, type, title, url, description, thumbnail, group_type, published_at, author, likes
+        SELECT id, type, title, url, description, thumbnail, group_type, published_at, author, likes, ai_comment
         FROM content
         WHERE group_type=?
         ORDER BY published_at DESC
@@ -94,7 +96,7 @@ def get_content_by_id(content_id: int):
     c = conn.cursor()
     c.execute(
         """
-        SELECT id, type, title, url, description, thumbnail, group_type, published_at, author, likes
+        SELECT id, type, title, url, description, thumbnail, group_type, published_at, author, likes, ai_comment
         FROM content
         WHERE id=?
         """,
